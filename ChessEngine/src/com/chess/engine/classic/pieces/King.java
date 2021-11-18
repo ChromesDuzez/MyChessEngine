@@ -18,7 +18,7 @@ public class King extends Piece
 	
 	public King(final Alliance pieceAllianace, final int piecePosition) 
 	{
-		super(piecePosition, pieceAllianace);
+		super(PieceType.KING, piecePosition, pieceAllianace);
 	}
 
 	@Override
@@ -57,6 +57,12 @@ public class King extends Piece
 			}
 		}
 		return ImmutableList.copyOf(legalMoves);
+	}
+	
+	@Override
+	public King movePiece(final Move move) 
+	{
+		return new King(move.getMovedPiece().getPieceAlliance(), move.getDestinationCoordinate());
 	}
 	
 	@Override

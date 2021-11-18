@@ -18,7 +18,7 @@ public class Knight extends Piece
 	
 	public Knight(final Alliance pieceAllianace, final int piecePosition) 
 	{
-		super(piecePosition, pieceAllianace);
+		super(PieceType.KNIGHT, piecePosition, pieceAllianace);
 	}
 
 	@Override
@@ -63,6 +63,12 @@ public class Knight extends Piece
 		}
 		
 		return ImmutableList.copyOf(legalMoves);
+	}
+
+	@Override
+	public Knight movePiece(final Move move) 
+	{
+		return new Knight(move.getMovedPiece().getPieceAlliance(), move.getDestinationCoordinate());
 	}
 	
 	@Override

@@ -18,7 +18,7 @@ public class Rook extends Piece
 
 	public Rook(final Alliance pieceAllianace, final int piecePosition) 
 	{
-		super(piecePosition, pieceAllianace);
+		super(PieceType.ROOK, piecePosition, pieceAllianace);
 	}
 
 	@Override
@@ -62,6 +62,12 @@ public class Rook extends Piece
 		}
 		
 		return ImmutableList.copyOf(legalMoves);
+	}
+
+	@Override
+	public Rook movePiece(final Move move) 
+	{
+		return new Rook(move.getMovedPiece().getPieceAlliance(), move.getDestinationCoordinate());
 	}
 	
 	@Override

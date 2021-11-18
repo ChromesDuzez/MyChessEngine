@@ -17,7 +17,7 @@ public class Pawn extends Piece
 	
 	public Pawn(final Alliance pieceAllianace, final int piecePosition) 
 	{
-		super(piecePosition, pieceAllianace);
+		super(PieceType.PAWN, piecePosition, pieceAllianace);
 	}
 
 	@Override
@@ -40,8 +40,8 @@ public class Pawn extends Piece
 				legalMoves.add(new MajorMove(board, this, candidateDestinationCoordinate));
 			} 
 			else if(currentCandidateOffset == 16 && this.isFirstMove() && 
-					(BoardUtils.SECOND_ROW[this.piecePosition] && this.getPieceAlliance().isBlack() ) || 
-					(BoardUtils.SEVENTH_ROW[this.piecePosition] && this.getPieceAlliance().isWhite() ) ) 
+					(BoardUtils.SEVENTH_RANK[this.piecePosition] && this.getPieceAlliance().isBlack() ) || 
+					(BoardUtils.SECOND_RANK[this.piecePosition] && this.getPieceAlliance().isWhite() ) ) 
 			{
 				final int behindCandidateDestinationCoordinate = this.piecePosition + (this.pieceAlliance.getDirection() * 8 );
 				if(!board.getTile(behindCandidateDestinationCoordinate).isTileOccupied() && 
@@ -82,6 +82,12 @@ public class Pawn extends Piece
 			}
 		}
 		return ImmutableList.copyOf(legalMoves);
+	}
+
+	@Override
+	public Pawn movePiece(final Move move) 
+	{
+		return new Pawn(move.getMovedPiece().getPieceAlliance(), move.getDestinationCoordinate());
 	}
 	
 	@Override

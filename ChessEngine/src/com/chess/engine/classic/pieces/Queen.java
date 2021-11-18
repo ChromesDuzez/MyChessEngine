@@ -18,7 +18,7 @@ public class Queen extends Piece
 
 	public Queen(final Alliance pieceAllianace, final int piecePosition) 
 	{
-		super(piecePosition, pieceAllianace);
+		super(PieceType.QUEEN, piecePosition, pieceAllianace);
 	}
 
 	@Override
@@ -62,6 +62,12 @@ public class Queen extends Piece
 		}
 		
 		return ImmutableList.copyOf(legalMoves);
+	}
+
+	@Override
+	public Queen movePiece(final Move move) 
+	{
+		return new Queen(move.getMovedPiece().getPieceAlliance(), move.getDestinationCoordinate());
 	}
 	
 	@Override

@@ -14,27 +14,36 @@ import com.chess.engine.classic.pieces.Pawn;
 import com.chess.engine.classic.pieces.Piece;
 import com.chess.engine.classic.pieces.Queen;
 import com.chess.engine.classic.pieces.Rook;
+import com.chess.engine.player.BlackPlayer;
+import com.chess.engine.player.Player;
+import com.chess.engine.player.WhitePlayer;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 public class Board 
 {
 	private final List<Tile> gameBoard;
-	@SuppressWarnings("unused")
+	
 	private final Collection<Piece> whitePieces;
-	@SuppressWarnings("unused")
 	private final Collection<Piece> blackPieces;
 	
+	private final WhitePlayer whitePlayer;
+	private final BlackPlayer blackPlayer;
 	
-	private Board(Builder builder) 
+	private final Player currentPlayer;
+	
+	private Board(final Builder builder) 
 	{ 
 		this.gameBoard = createGameBoard(builder);
 		this.whitePieces = CalculateActivePieces(this.gameBoard, Alliance.WHITE);
 		this.blackPieces = CalculateActivePieces(this.gameBoard, Alliance.BLACK);
 		
-		@SuppressWarnings("unused")
 		final Collection<Move> whiteStandardLegalMoves = calculateLegalMoves(this.whitePieces);
-		@SuppressWarnings("unused")
 		final Collection<Move> blackStandardLegalMoves = calculateLegalMoves(this.blackPieces);
+		
+		this.whitePlayer = new WhitePlayer(this, whiteStandardLegalMoves, blackStandardLegalMoves);
+		this.blackPlayer = new BlackPlayer(this, whiteStandardLegalMoves, blackStandardLegalMoves);
+		this.currentPlayer = builder.nextMoveMaker.choosePlayer(this.whitePlayer, this.blackPlayer);
 	}
 	
 	@Override
@@ -52,7 +61,19 @@ public class Board
 		}
 		return builder.toString();
 	}
-
+	
+	public Player currentPlayer()
+	{
+		return this.currentPlayer;
+	}
+	
+	
+	public Player blackPlayer() { return this.blackPlayer; }
+	public Player whitePlayer() { return this.whitePlayer; }
+	
+	public Collection<Piece> getBlackPieces() { return this.blackPieces; }
+	public Collection<Piece> getWhitePieces() { return this.whitePieces; }
+	
 	private Collection<Move> calculateLegalMoves(Collection<Piece> pieces) 
 	{
 		final List<Move> legalMoves = new ArrayList<>();
@@ -137,10 +158,16 @@ public class Board
         return builder.build();
 	}
 	
+	public Iterable<Move> getAllLegalMoves() 
+	{
+		return Iterables.unmodifiableIterable(Iterables.concat(this.whitePlayer.getLegalMoves(), this.whitePlayer.getLegalMoves(), this.blackPlayer.getLegalMoves()));
+	}
+	
 	public static class Builder
 	{
 		Map<Integer, Piece> boardConfig;
 		Alliance nextMoveMaker;
+		Pawn enPassantPawn;
 		
 		public Builder(){
 			this.boardConfig = new HashMap<>();
@@ -162,7 +189,12 @@ public class Board
 		{
 			return new Board(this);
 		}
-	}	
+
+		public void setEnPassantPawn(Pawn enPassantPawn) 
+		{
+			this.enPassantPawn = enPassantPawn;
+		}
+	}
 }
 
 
